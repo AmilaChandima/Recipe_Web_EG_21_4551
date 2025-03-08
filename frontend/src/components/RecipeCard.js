@@ -2,11 +2,11 @@ import { Box, Button, Heading, HStack, Image, Text, useToast } from '@chakra-ui/
 import React from 'react';
 import { MdDeleteOutline, MdModeEditOutline } from "react-icons/md";
 import { crudRecipe } from "../store/recipe";
-import { useNavigate } from "react-router-dom";  // Import useNavigate
+import { useNavigate } from "react-router-dom";  
 
 const RecipeCard = ({ recipe }) => {
   const { deleteRecipe } = crudRecipe();
-  const navigate = useNavigate();  // Hook for navigation
+  const navigate = useNavigate();  
   const toast = useToast();
 
   const handleDeleteRecipe = async (id) => {
@@ -18,21 +18,21 @@ const RecipeCard = ({ recipe }) => {
         title: "Recipe deleted",
         description: "Recipe has been successfully deleted",
         status: "error",
-        duration: 3000, // 3 seconds
+        duration: 3000, 
         isClosable: true,
         position: "top",
       });
 
     }
-    //await deleteRecipe(id);
+    
   };
 
-  // Navigate to ViewPage when clicking the card
+ 
   const handleViewRecipe = () => {
     navigate(`/view/${recipe._id}`);
   };
 
-  // Navigate to EditPage when clicking the Edit button
+  
   const handleEditRecipe = (e) => {
     e.stopPropagation(); // Prevent navigation to ViewPage
     navigate(`/edit/${recipe._id}`);
@@ -57,12 +57,12 @@ const RecipeCard = ({ recipe }) => {
           {recipe.type}
         </Text>
         <HStack spacing={2}>
-          {/* Edit Button - Navigates to EditPage */}
+          
           <Button onClick={handleEditRecipe}>
             <MdModeEditOutline />
           </Button>
           
-          {/* Delete Button - Prevents navigation when clicked */}
+          
           <Button onClick={(e) => {
             e.stopPropagation(); // Prevent navigation on delete click
             handleDeleteRecipe(recipe._id);

@@ -4,9 +4,9 @@ import { crudRecipe } from "../store/recipe";
 import { Box,Button,Container,Heading,Input,VStack,Select,FormControl,FormLabel,Spinner, useToast, HStack, Link } from "@chakra-ui/react";
 
 const EditPage = () => {
-  const { id } = useParams(); // Get recipe ID from URL
-  const { fetchRecipeById, updateRecipeById } = crudRecipe(); // CRUD functions
-  const navigate = useNavigate(); // For navigation
+  const { id } = useParams(); 
+  const { fetchRecipeById, updateRecipeById } = crudRecipe(); 
+  const navigate = useNavigate(); 
   const toast = useToast();
 
   const [recipe, setRecipe] = useState({

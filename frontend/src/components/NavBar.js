@@ -31,7 +31,7 @@ const NavBar = () => {
           alignItems="center"
           gap={2}
         >
-          <Link to="/">Recipe Warden</Link>
+          <Link to="/">Recipe Warden </Link>
           <LuChefHat />
         </Text>
 
