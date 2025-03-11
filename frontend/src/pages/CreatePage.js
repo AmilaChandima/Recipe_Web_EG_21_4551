@@ -1,13 +1,10 @@
-import { Box, Button, Container, Heading, Input, VStack, Select, FormControl, FormLabel, useToast, HStack, Link } from '@chakra-ui/react'
-import React from 'react'
-import {crudRecipe} from '../store/recipe'
+import { Box, Button, Container, Heading, Input, VStack, Select, FormControl, FormLabel, useToast, HStack, Link } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-
-
-
+import { createRecipe } from '../services/recipeService';
 
 const CreatePage = () => {
-  const [newRecipe, setNewRecipe] = React.useState({
+  const [newRecipe, setNewRecipe] = useState({
     name: "",
     type: "",
     ingredients: "",
@@ -16,41 +13,46 @@ const CreatePage = () => {
   });
 
   const toast = useToast();
-
-
-  //const toast = useToast()
   const navigate = useNavigate();
 
-
-
-  const {createRecipe} = crudRecipe()
-
   const handleAddRecipe = async () => {
-    const {success, message} = await createRecipe(newRecipe);
-    console.log("Success:",success);
-    console.log("Message:", message);
-    setNewRecipe({name:"",type:"",ingredients:"",instructions:"",image:""})
-    if(success){
-      navigate("/");
+    try {
+      const { success, message } = await createRecipe(newRecipe);
+      console.log("Success:", success);
+      console.log("Message:", message);
 
+      if (success) {
+        setNewRecipe({ name: "", type: "", ingredients: "", instructions: "", image: "" });
+        navigate("/");
+
+        toast({
+          title: 'Recipe Added',
+          description: "New recipe has been successfully added",
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        });
+      } else {
+        toast({
+          title: 'Recipe Not Added',
+          description: message || "Please provide all necessary details",
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        });
+      }
+    } catch (error) {
+      console.error("Error adding recipe:", error);
       toast({
-        title: 'Recipe Added',
-        description: "New recipe has been sucessfully added",
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-        position:'top',
-      })
-    }
-    else{
-      toast({
-        title: 'Recipe cannot add',
-        description: "Please provide all necessary details",
+        title: 'Error',
+        description: "An error occurred while adding the recipe",
         status: 'error',
         duration: 3000,
         isClosable: true,
-        position:'top',
-      })
+        position: 'top',
+      });
     }
   };
 
@@ -90,7 +92,7 @@ const CreatePage = () => {
               placeholder="Ingredients ex: rice - 1 cup, water - 2 cups etc"
               name='ingredients'
               value={newRecipe.ingredients}
-              onChange={(e) => setNewRecipe({...newRecipe, ingredients: e.target.value})}
+              onChange={(e) => setNewRecipe({ ...newRecipe, ingredients: e.target.value })}
             />
           </FormControl>
 
@@ -100,27 +102,26 @@ const CreatePage = () => {
               placeholder="Instructions"
               name='instructions'
               value={newRecipe.instructions}
-              onChange={(e) => setNewRecipe({...newRecipe, instructions: e.target.value})}
+              onChange={(e) => setNewRecipe({ ...newRecipe, instructions: e.target.value })}
             />
           </FormControl>
 
           <FormControl mb={4}>
-          <FormLabel>
-            Image URL (optional){" "}
-            <span style={{ color: "gray",fontSize:"12" }}>
-               : to get images from Unsplash{" "}
-              <Link href="https://unsplash.com/" isExternal color="blue.500">
-                Click Here
-              </Link>
-            </span>
-
-          </FormLabel>
+            <FormLabel>
+              Image URL (optional){" "}
+              <span style={{ color: "gray", fontSize: "12px" }}>
+                : to get images from Unsplash{" "}
+                <Link href="https://unsplash.com/" isExternal color="blue.500">
+                  Click Here
+                </Link>
+              </span>
+            </FormLabel>
 
             <Input
               placeholder="Image URL"
               name="image"
               value={newRecipe.image}
-              onChange={(e) => setNewRecipe({...newRecipe, image: e.target.value})}
+              onChange={(e) => setNewRecipe({ ...newRecipe, image: e.target.value })}
             />
           </FormControl>
 
@@ -128,13 +129,12 @@ const CreatePage = () => {
             <Button onClick={handleAddRecipe} colorScheme='blue'>
               Add Recipe
             </Button>
-            <Button onClick={()=>navigate('/')}>Cancel</Button>
+            <Button onClick={() => navigate('/')}>Cancel</Button>
           </HStack>
-
         </Box>
       </VStack>
     </Container>
-  )
-}
+  );
+};
 
 export default CreatePage;

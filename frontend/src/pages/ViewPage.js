@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; 
-import { crudRecipe } from "../store/recipe";
+import { fetchRecipeById } from "../services/recipeService"; 
 import { Box, Image, Heading, Text, Container, Spinner, VStack, HStack, Button } from "@chakra-ui/react";
 import { MdModeEditOutline } from "react-icons/md";
 
 const ViewPage = () => {
   const { id } = useParams(); 
   const navigate = useNavigate(); 
-  const { fetchRecipeById } = crudRecipe(); 
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +19,7 @@ const ViewPage = () => {
     };
 
     getRecipe();
-  }, [id, fetchRecipeById]);
+  }, [id]);
 
   if (loading) {
     return (
@@ -38,7 +37,6 @@ const ViewPage = () => {
     );
   }
 
-  
   const handleEditRecipe = () => {
     navigate(`/edit/${id}`); 
   };

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { crudRecipe } from "../store/recipe";
-import { Box,Button,Container,Heading,Input,VStack,Select,FormControl,FormLabel,Spinner, useToast, HStack, Link } from "@chakra-ui/react";
+import { fetchRecipeById, updateRecipeById } from "../services/recipeService";
+import { Box, Button, Container, Heading, Input, VStack, Select, FormControl, FormLabel, Spinner, useToast, HStack, Link } from "@chakra-ui/react";
 
 const EditPage = () => {
   const { id } = useParams(); 
-  const { fetchRecipeById, updateRecipeById } = crudRecipe(); 
   const navigate = useNavigate(); 
   const toast = useToast();
 
@@ -19,35 +18,57 @@ const EditPage = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // Fetch the existing recipe details
+  
   useEffect(() => {
     const getRecipe = async () => {
-      const data = await fetchRecipeById(id);
-      if (data) {
-        setRecipe(data);
+      setLoading(true);
+      try {
+        const data = await fetchRecipeById(id);
+        if (data) {
+          setRecipe(data);
+        }
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
       }
       setLoading(false);
     };
 
     getRecipe();
-  }, [id, fetchRecipeById]);
+  }, [id]);
 
   const handleUpdateRecipe = async () => {
-    const { success, message } = await updateRecipeById(id, recipe);
-    console.log("Success:", success);
-    console.log("Message:", message);
-    if (success) {
-      navigate(`/view/${id}`); 
-
+    try {
+      const { success, message } = await updateRecipeById(id, recipe);
+      if (success) {
+        toast({
+          title: 'Recipe Updated',
+          description: "Recipe has been successfully updated",
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        });
+        navigate(`/view/${id}`); 
+      } else {
+        toast({
+          title: 'Update Failed',
+          description: message || "Something went wrong",
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        });
+      }
+    } catch (error) {
+      console.error("Error updating recipe:", error);
       toast({
-        title: 'Recipe Updated',
-        description: "Recipe has been sucessfully updated",
-        status: 'success',
+        title: 'Error',
+        description: "An error occurred while updating the recipe",
+        status: 'error',
         duration: 3000,
         isClosable: true,
-        position:'top',
-      })
-
+        position: 'top',
+      });
     }
   };
 
@@ -110,16 +131,14 @@ const EditPage = () => {
           </FormControl>
 
           <FormControl mb={4}>
-          
             <FormLabel>
               Image URL (optional){" "}
-              <span style={{ color: "gray",fontSize:"12" }}>
+              <span style={{ color: "gray", fontSize: "12px" }}>
                 : to get images from Unsplash{" "}
                 <Link href="https://unsplash.com/" isExternal color="blue.500">
                   Click Here
                 </Link>
               </span>
-
             </FormLabel>
             <Input
               placeholder="Image URL"
@@ -132,7 +151,7 @@ const EditPage = () => {
             <Button onClick={handleUpdateRecipe} colorScheme="blue">
               Update Recipe
             </Button>
-            <Button onClick={()=>navigate('/')}>Cancel</Button>
+            <Button onClick={() => navigate('/')}>Cancel</Button>
           </HStack>
 
         </Box>
